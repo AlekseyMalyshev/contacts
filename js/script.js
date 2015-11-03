@@ -12,9 +12,10 @@
     $form = $('form#contact-form');
     $form.on('submit', editContact);
     $form.on('reset', closeModal);
+    $tbody = $('tbody#contact-list');
     $('button.add').on('click', newContact);
-    $('tbody#contact-list').on('click', 'tr', selectContact);
-    $('tbody#contact-list').on('click', 'button.del', deleteContact);
+    $tbody.on('click', 'tr', selectContact);
+    $tbody.on('click', 'button.del', deleteContact);
     $('thead>tr>th').on('click', sort);
 
     init();
@@ -36,6 +37,7 @@ function init() {
 }
 
 var $form;
+var $tbody;
 var $del;
 var contacts = [];
 var lastId = 0;
@@ -51,7 +53,7 @@ function initTable() {
     }
     rows.push(createRow(contact));
   });
-  $('tbody#contact-list').append(rows);
+  $tbody.append(rows);
 }
 
 function closeModal() {
@@ -88,7 +90,7 @@ function editContact(event) {
     }
   }
   else {
-    $('tbody#contact-list').append($row);
+    $tbody.append($row);
     contacts.push(contact);
   }
   localStorage.contacts = JSON.stringify(contacts);
@@ -169,9 +171,41 @@ function deleteContact(event) {
   }
 
   localStorage.contacts = JSON.stringify(contacts);
-  $row.detach();
+  $row.remove();
 }
 
 function sort(event) {
-  console.log(event.target.id);
+  var id = parseInt(event.target.id.substr(1));
+
+  contacts.sort(function(a, b) {
+    switch (id) {
+      case 0:
+        return a.name > b.name;
+      case 1:
+        return a.email > b.email;
+      case 2:
+        return a.phone > b.phone;
+      case 3:
+        return a.addr > b.addr;
+      case 4:
+        return a.category > b.category;
+      case 5:
+        return a.comment > b.comment;
+      default:
+        return false;
+    }
+  });
+
+  var rows = [];
+  contacts.forEach(function(contact) {
+    if (lastId < contact.id) {
+      lastId = contact.id;
+    }
+    rows.push(createRow(contact));
+  });
+
+  var arr = $('tbody#contact-list>tr').remove();
+  $tbody.append(rows);
+  $('table.contact-list th.sorted').removeClass('sorted');
+  $(event.target).addClass('sorted');
 }

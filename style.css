@@ -39,8 +39,15 @@ table.contact-list td:hover {
   cursor: pointer;
 }
 
-table.contact-list th:hover {
+table.contact-list th.sortable:hover {
   cursor: pointer;
+}
+
+table.contact-list th.sorted:after {
+  font-family:FontAwesome;
+  font-style: normal;
+  font-size: 12px;
+  content: "\F15D";
 }
 
 div.modal-edit {
